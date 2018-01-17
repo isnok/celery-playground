@@ -4,7 +4,6 @@ version: '3'
 services:
 
   commander:
-    container_name: commander
     restart: always
     build:
       context: .
@@ -15,7 +14,6 @@ services:
       #- postgres
 
   worker:
-    container_name: worker
     restart: always
     build:
       context: .
@@ -35,7 +33,7 @@ services:
 
 # postgres result backend not yet in use
   #postgres:
-    #image: postgres
+  #image: postgres:9.99
     #restart: always
     #environment:
       #POSTGRES_PASSWORD: test
