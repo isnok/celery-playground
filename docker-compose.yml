@@ -1,45 +1,41 @@
+---
 version: '3'
 
 services:
 
   commander:
-    container_name: celery_commander
+    container_name: commander
     restart: always
     build:
-      context: ./celery-worker/
-      dockerfile: ./Dockerfile.commander
-      #image: node-app:latest
-    #ports:
-      #- "127.0.0.1:8888:8888"
+      context: .
+      dockerfile: Dockerfile.commander
     links:
-      - postgres
       - redis
       - rabbit
+      #- postgres
 
   worker:
-    container_name: celery_worker
+    container_name: worker
     restart: always
     build:
-      context: ./celery-worker/
-      dockerfile: ./Dockerfile.worker
-      #image: node-app:latest
-    #ports:
-      #- "127.0.0.1:8888:8888"
+      context: .
+      dockerfile: Dockerfile.worker
     links:
-      - postgres
       - redis
       - rabbit
+      #- postgres
 
   redis:
-    image: redis
+    image: redis:4.0.6
     restart: always
 
   rabbit:
-    image: rabbitmq
+    image: rabbitmq:3.7.1
     restart: always
 
-  postgres:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: test
+# postgres result backend not yet in use
+  #postgres:
+    #image: postgres
+    #restart: always
+    #environment:
+      #POSTGRES_PASSWORD: test

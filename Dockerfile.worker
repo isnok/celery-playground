@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:9.3
 MAINTAINER Konstantin Martini <konstantin@martini.pm>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -6,9 +6,11 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get install -y python-pip librabbitmq4
 RUN apt-get install -y vim tmux
-RUN pip install celery redis ipython
 
-ADD code /code
+ADD celery_app/requirements.txt /
+RUN pip install -r requirements.txt
+
+ADD celery-app/code /code
 WORKDIR /code
 
 ENV CELERY_APP celery_app
