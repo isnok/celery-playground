@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  commander:
+    container_name: celery_commander
+    restart: always
+    build:
+      context: ./celery-worker/
+      dockerfile: ./Dockerfile.commander
+      #image: node-app:latest
+    #ports:
+      #- "127.0.0.1:8888:8888"
+    links:
+      - postgres
+      - redis
+      - rabbit
+
+  worker:
+    container_name: celery_worker
+    restart: always
+    build:
+      context: ./celery-worker/
+      dockerfile: ./Dockerfile.worker
+      #image: node-app:latest
+    #ports:
+      #- "127.0.0.1:8888:8888"
+    links:
+      - postgres
+      - redis
+      - rabbit
+
+  redis:
+    image: redis
+    restart: always
+
+  rabbit:
+    image: rabbitmq
+    restart: always
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: test

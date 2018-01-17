@@ -1,0 +1,16 @@
+FROM debian:latest
+MAINTAINER Konstantin Martini <konstantin@martini.pm>
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update
+RUN apt-get install -y python-pip librabbitmq4
+RUN apt-get install -y vim tmux
+RUN pip install celery redis ipython
+
+ADD code /code
+WORKDIR /code
+
+ENV CELERY_APP celery_app
+
+CMD ["celery", "worker", "--loglevel", "info"]
