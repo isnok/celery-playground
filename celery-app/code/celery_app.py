@@ -32,3 +32,7 @@ def sleep(seconds):
     logger.info("Done sleeping for {} seconds.".format(seconds))
 
     return seconds
+
+def create_tasks(num=10, seconds=23):
+    return [sleep.delay(seconds) for i in range(num)]
+
