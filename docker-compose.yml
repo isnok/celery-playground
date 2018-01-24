@@ -23,6 +23,26 @@ services:
       - rabbit
       #- postgres
 
+  normal:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.normal
+    links:
+      - redis
+      - rabbit
+      #- postgres
+
+  priority:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.priority
+    links:
+      - redis
+      - rabbit
+      #- postgres
+
   redis:
     image: redis:4.0.6
     restart: always

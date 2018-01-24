@@ -5,8 +5,6 @@ logger = logging.getLogger()
 from celery import Celery, shared_task
 import time
 
-# Celery Config
-
 app = Celery()
 celeryconfig = {
     'BROKER_URL': 'amqp://rabbit',
@@ -18,26 +16,8 @@ celeryconfig = {
 celeryconfig['CELERY_ROUTES'] = {
     'celery_app.normal_task': {'queue': 'celery'},
     'celery_app.prio_task': {'queue': 'priority'},
-
-    # 'core.tasks.normal_task': {'queue': 'celery'},
-    # 'core.tasks.prio_task': {'queue': 'priority'},
-
-    # 'normal_task': {'queue': 'celery'},
-    # 'prio_task': {'queue': 'priority'},
-
-    # '__main__.normal_task': {'queue': 'celery'},
-    # '__main__.prio_task': {'queue': 'priority'},
 }
 
-# from kombu import Exchange, Queue
-# celeryconfig['CELERY_QUEUES'] = (
-    # Queue('celery', Exchange('celery'), routing_key='celery',
-          # # queue_arguments={'x-max-priority': 10}
-    # ),
-    # Queue('prio', Exchange('prio'), routing_key='prio',
-          # # queue_arguments={'x-max-priority': 10}
-    # ),
-# )
 # celeryconfig['CELERY_ACKS_LATE'] = True
 # celeryconfig['CELERYD_PREFETCH_MULTIPLIER'] = 1
 
@@ -56,6 +36,7 @@ def id_generator():
             yield '{}_{}'.format(first, second)
 
 id_gen = id_generator()
+
 
 def raw_task(seconds, identifier):
     """ A helpful task for debugging asynchronous execution. """
