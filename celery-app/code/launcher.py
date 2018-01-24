@@ -5,9 +5,20 @@ import celery_app
 
 if __name__ == '__main__':
 
-    if len(sys.argv) > 1:
-        prio = True
-    else:
-        prio = False
+    num_tasks = 10 # fixed
+    seconds = 23
+    prio = False
 
-    celery_app.create_tasks(10, prio=prio)
+    if len(sys.argv) == 2:
+        """ An int as argument changes exec time, a non-int makes the tasks prio. """
+        try:
+            seconds = int(sys.argv[1])
+        except:
+            prio = True
+
+    elif len(sys.argv) == 3:
+
+        seconds = int(sys.argv[1])
+        prio = True
+
+    celery_app.create_tasks(num_tasks, seconds=seconds, prio=prio)
