@@ -14,9 +14,19 @@ celeryconfig = {
 }
 
 
-CELERY_ROUTES = {
+# celeryconfig['task_routes'] = { # Cannot mix new setting names with old setting names...
+celeryconfig['CELERY_ROUTES'] = {
     'celery_app.normal_task': {'queue': 'celery'},
     'celery_app.prio_task': {'queue': 'priority'},
+
+    'core.tasks.normal_task': {'queue': 'celery'},
+    'core.tasks.prio_task': {'queue': 'priority'},
+
+    'normal_task': {'queue': 'celery'},
+    'prio_task': {'queue': 'priority'},
+
+    '__main__.normal_task': {'queue': 'celery'},
+    '__main__.prio_task': {'queue': 'priority'},
 }
 
 # from kombu import Exchange, Queue
@@ -75,3 +85,11 @@ def create_tasks(count, seconds=23, prio=False):
 
     return tasks
 
+
+# celery does not like this... (tasks from __main__)
+# if __name__ == '__main__':
+    # logger.info('Starting 10 normal tasks...')
+    # create_tasks(10)
+
+    # logger.info('Starting 10 priority tasks...')
+    # create_tasks(10, prio=True)
