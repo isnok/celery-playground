@@ -13,26 +13,65 @@ celeryconfig = {
     'CELERY_RESULT_BACKEND': 'redis://redis',
 }
 
+
+CELERY_ROUTES = {
+    'celery_app.normal_task': {'queue': 'celery'},
+    'celery_app.prio_task': {'queue': 'priority'},
+}
+
 # from kombu import Exchange, Queue
 # celeryconfig['CELERY_QUEUES'] = (
-    # Queue('tasks', Exchange('tasks'), routing_key='tasks',
-          # queue_arguments={'x-max-priority': 10}),
+    # Queue('celery', Exchange('celery'), routing_key='celery',
+          # # queue_arguments={'x-max-priority': 10}
+    # ),
+    # Queue('prio', Exchange('prio'), routing_key='prio',
+          # # queue_arguments={'x-max-priority': 10}
+    # ),
 # )
 # celeryconfig['CELERY_ACKS_LATE'] = True
 # celeryconfig['CELERYD_PREFETCH_MULTIPLIER'] = 1
 
 app.config_from_object(celeryconfig)
 
-@shared_task
-def sleep(seconds):
+from itertools import cycle
+import string
+
+def id_generator():
+    letters = cycle(string.ascii_uppercase)
+    numbers = string.digits
+
+    while True:
+        first = next(letters)
+        for second in numbers:
+            yield '{}_{}'.format(first, second)
+
+id_gen = id_generator()
+
+def raw_task(seconds, identifier):
     """ A helpful task for debugging asynchronous execution. """
 
-    logger.info("Started sleep for {} seconds.".format(seconds))
+    logger.info("Started {} for {} seconds.".format(identifier, seconds))
     time.sleep(seconds)
-    logger.info("Done sleeping for {} seconds.".format(seconds))
+    logger.info("Done with {} after {} seconds.".format(identifier, seconds))
 
-    return seconds
+    return identifier, seconds
 
-def create_tasks(num=10, seconds=23):
-    return [sleep.delay(seconds) for i in range(num)]
+
+@shared_task
+def normal_task(*args, **kwd):
+    return 'normal', raw_task(*args, **kwd)
+
+@shared_task
+def prio_task(*args, **kwd):
+    return 'prio', raw_task(*args, **kwd)
+
+
+def create_tasks(count, seconds=23, prio=False):
+    task = {True: prio_task, False: normal_task}[prio]
+    tasks = []
+
+    for i in range(count):
+        tasks.append(task.delay(seconds, identifier=next(id_gen)))
+
+    return tasks
 
