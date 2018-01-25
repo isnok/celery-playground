@@ -67,6 +67,10 @@ def create_tasks(count, seconds=23, prio=False):
     return tasks
 
 
+# To run a normal task at priority, do it like this:
+# normal_task.apply_async(args=(10,), kwargs={'identifier':'normaltask@prio'}, queue='priority')
+
+
 # celery does not like this... (tasks from __main__)
 # if __name__ == '__main__':
     # logger.info('Starting 10 normal tasks...')
